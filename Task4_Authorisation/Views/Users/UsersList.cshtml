@@ -1,0 +1,38 @@
+﻿@model IEnumerable<User>
+@{ 
+    Layout = "_Layout";
+}
+<h2>Список пользователей</h2>
+<form>
+    <table class="table">
+        <tr>
+            <td></td>
+            <td>Имя</td>
+            <td>E-mail</td>
+            <td>Дата регистрации</td>
+            <td>Дата последнего входа</td>
+            <td>Статус</td>
+        </tr>
+        @{
+            foreach (User u in @Model)
+            {
+                <tr>
+                    <td><input type="checkbox" name="choosen" value="@u.id"/></td>
+                    <td>@u.name</td>
+                    <td>@u.email</td>
+                    <td>@u.registrationDate</td>
+                    <td>@u.lastLogin</td>
+                    @{string status;
+                        if (u.isBlocked)
+                            status = "Заблокирован";
+                        else
+                            status = "Не заблокирован";
+                    }
+                    <td>@status</td>
+
+                </tr>
+            }
+        }
+    </table>
+</form>
+
