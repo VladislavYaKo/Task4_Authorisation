@@ -62,7 +62,7 @@ namespace Task4_Authorisation.Controllers
                 {
                     await Authenticate(model.Email); // аутентификация
 
-                    return RedirectToAction("UsersList", "UsersController");
+                    return RedirectToAction("UsersList", "Users");
                 }
                 ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
@@ -83,7 +83,7 @@ namespace Task4_Authorisation.Controllers
                 {
                     using (SHA256 sha256 = SHA256.Create())
                     {
-                        usersRepository.AddUser(new User
+                        await usersRepository.AddUser(new User
                         {
                             name = model.Name,
                             email = model.Email,

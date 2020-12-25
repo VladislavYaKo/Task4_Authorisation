@@ -8,7 +8,7 @@ using Task4_Authorisation.Data;
 
 namespace Task4_Authorisation.Migrations
 {
-    [DbContext(typeof(AppDBContent))]
+    [DbContext(typeof(AppDBContext))]
     partial class AppDBContentModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)

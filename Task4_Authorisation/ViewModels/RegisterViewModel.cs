@@ -16,10 +16,12 @@ namespace Task4_Authorisation.ViewModels
 
         [Required(ErrorMessage = "Не введён пароль")]
         [DataType(DataType.Password)]
+        [MinLength(1)]
         public string Password { get; set; }
 
         [DataType(DataType.Password)]
         [Compare("Password", ErrorMessage = "Пароли не совпадают")]
+        [MinLength(1)]
         public string ConfirmPassword { get; set; }
     }
 }

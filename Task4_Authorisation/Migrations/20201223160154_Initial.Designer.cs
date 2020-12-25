@@ -9,7 +9,7 @@ using Task4_Authorisation.Data;
 
 namespace Task4_Authorisation.Migrations
 {
-    [DbContext(typeof(AppDBContent))]
+    [DbContext(typeof(AppDBContext))]
     [Migration("20201223160154_Initial")]
     partial class Initial
     {

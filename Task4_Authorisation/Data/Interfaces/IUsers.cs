@@ -10,7 +10,7 @@ namespace Task4_Authorisation.Data.Interfaces
     {
         IEnumerable<User> AllUsers { get; }
 
-        void AddUser(User user);
-        public void SaveDBChanges();        
+        public Task AddUser(User user);
+        public Task DeleteUsers(User[] users);
     }
 }

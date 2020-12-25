@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -24,9 +26,41 @@ namespace Task4_Authorisation.Controllers
         [Authorize]
         public ViewResult UsersList()
         {
-            //Проверка пользователя на авторизованность todo
-            string debug = usersRepository.AllUsers.FirstOrDefault(u => u.email == "bitch@mail.ru").lastLogin;
             return View(usersRepository.AllUsers);
+        }
+        [HttpPost]
+        public async Task<IActionResult> ProcessList(string actionBtn)
+        {
+            string[] ids = Request.Form["choosenUser"].ToArray();
+            User[] affectedUsers = usersRepository.AllUsers.Where(u => ids.Contains(u.id.ToString())).ToArray();
+            try
+            {
+                Task result = (Task)this.GetType()
+                    .GetMethod(actionBtn + "Users", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+                    .Invoke(this, new object[] { affectedUsers});
+                await result;
+            }
+            catch(Exception e)
+            {
+                string debug = e.Message;
+            }
+            
+            return RedirectToAction("UsersList");
+        }
+
+        private async Task DeleteUsers(User[] affectedUsers)
+        {
+            await usersRepository.DeleteUsers(affectedUsers);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        private void BlockUsers(User[] affectedUsers)
+        {
+
+        }
+        private void UnblockUsers(User[] affectedUsers)
+        {
+
         }
     }
 }

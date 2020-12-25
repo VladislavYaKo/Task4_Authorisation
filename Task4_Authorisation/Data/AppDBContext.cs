@@ -7,10 +7,10 @@ using Task4_Authorisation.Data.Models;
 
 namespace Task4_Authorisation.Data
 {
-    public class AppDBContent : DbContext
+    public class AppDBContext : DbContext
     {
         public DbSet<User> users { get; set; }
-        public AppDBContent(DbContextOptions<AppDBContent> options) : base(options)
+        public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
         {
 
         }

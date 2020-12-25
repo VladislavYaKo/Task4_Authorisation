@@ -3,10 +3,14 @@
     Layout = "_Layout";
 }
 <h2>Список пользователей</h2>
-<form>
+
+<form asp-controller="Users" asp-action="ProcessList">
+    <input type="submit" value="Delete" name="actionBtn" />
+    <input type="submit" value="Block" name="actionBtn" />
+    <input type="submit" value="Unblock" name="actionBtn" />
     <table class="table">
         <tr>
-            <td></td>
+            <td><input type="checkbox" id="changeAll" onclick="changeAllClick()" name="changeAll" /></td>
             <td>Имя</td>
             <td>E-mail</td>
             <td>Дата регистрации</td>
@@ -17,7 +21,7 @@
             foreach (User u in @Model)
             {
                 <tr>
-                    <td><input type="checkbox" name="choosen" value="@u.id"/></td>
+                    <td><input type="checkbox" name="choosenUser" value="@u.id" class="userCheckBox" /></td>
                     <td>@u.name</td>
                     <td>@u.email</td>
                     <td>@u.registrationDate</td>
@@ -35,4 +39,16 @@
         }
     </table>
 </form>
+<a asp-controller="Account" asp-action="Logout">Выход</a>
+
+<script>
+    
+    function changeAllClick(e) {
+        var checkboxes = document.getElementsByClassName('userCheckBox');
+        var changeAllBox = document.getElementById('changeAll');
+        for (var i = 0; i < checkboxes.length; i++) {
+            checkboxes[i].checked = changeAllBox.checked;
+        };
+    }
+</script>
 

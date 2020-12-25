@@ -27,8 +27,8 @@ namespace Task4_Authorisation
         public void ConfigureServices(IServiceCollection services)
         {
             string connection = configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<AppDBContent>(options => options.UseSqlServer(connection));
-            services.AddTransient<IUsers, UsersRepository>();
+            services.AddDbContext<AppDBContext>(options => options.UseSqlServer(connection));
+            services.AddScoped<IUsers, UsersRepository>();
             services.AddMvc();
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>

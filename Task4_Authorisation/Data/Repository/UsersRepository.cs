@@ -9,22 +9,23 @@ namespace Task4_Authorisation.Data.Repository
 {
     public class UsersRepository : IUsers
     {
-        private readonly AppDBContent appDbContent;
+        private readonly AppDBContext appDbContext;
 
-        public UsersRepository(AppDBContent appDbContent)
+        public UsersRepository(AppDBContext appDbContent)
         {
-            this.appDbContent = appDbContent;
+            this.appDbContext = appDbContent;
         }
-        public IEnumerable<User> AllUsers => appDbContent.users;
+        public IEnumerable<User> AllUsers => appDbContext.users;
 
-        public void AddUser(User user)
+        public async Task AddUser(User user)
         {
-            appDbContent.users.Add(user);
-            appDbContent.SaveChanges();
+            appDbContext.users.Add(user);
+            await appDbContext.SaveChangesAsync();
         }
-        public void SaveDBChanges()
+        public async Task DeleteUsers(User[] users)
         {
-            appDbContent.SaveChanges();
+            appDbContext.users.RemoveRange(users);
+            await appDbContext.SaveChangesAsync();
         }
     }
 }
