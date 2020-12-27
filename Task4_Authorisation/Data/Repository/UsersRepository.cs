@@ -27,5 +27,19 @@ namespace Task4_Authorisation.Data.Repository
             appDbContext.users.RemoveRange(users);
             await appDbContext.SaveChangesAsync();
         }
+        public async Task ChangeStatus(User[] users, bool newStatus)
+        {
+            foreach(User u in users)
+            {
+                appDbContext.users.First(us => us.email == u.email).isBlocked = newStatus;                             
+            }
+            await appDbContext.SaveChangesAsync();
+        }
+
+        public async Task UpdateLastLogin(string email)
+        {
+            appDbContext.users.First(u => u.email == email).lastLogin = DateTime.Now.ToString("dd/MM/yyyy HH/mm");
+            await appDbContext.SaveChangesAsync();
+        }
     }
 }

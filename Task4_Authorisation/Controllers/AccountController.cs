@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -38,7 +39,11 @@ namespace Task4_Authorisation.Controllers
                     return false;
             }
         }
-
+        private bool IsBlocked(string email)
+        {
+            User user = usersRepository.AllUsers.FirstOrDefault(u => u.email == email);
+            return user != null ? user.isBlocked : false;
+        }
         private bool HasUser(string email)
         {
             if (usersRepository.AllUsers.FirstOrDefault(u => u.email == email) == null)
@@ -59,12 +64,17 @@ namespace Task4_Authorisation.Controllers
             if (ModelState.IsValid)
             {
                 if (IsCorrectAuthorisation(model.Email, model.Password))
-                {
-                    await Authenticate(model.Email); // аутентификация
-
-                    return RedirectToAction("UsersList", "Users");
-                }
-                ModelState.AddModelError("", "Некорректные логин и(или) пароль");
+                    if (!IsBlocked(model.Email))
+                    {
+                        await Authenticate(model.Email);
+                        SetIdToSession(model.Email);
+                        await usersRepository.UpdateLastLogin(model.Email);
+                        return RedirectToAction("UsersList", "Users");
+                    }
+                    else                    
+                        ModelState.AddModelError("", "Вы заблокированы");                    
+                else
+                    ModelState.AddModelError("", "Некорректные логин и(или) пароль");
             }
             return View(model);
         }
@@ -91,10 +101,8 @@ namespace Task4_Authorisation.Controllers
                             registrationDate = DateTime.Now, lastLogin = "-", 
                             isBlocked = false
                         });
-                    }                        
-
+                    } 
                     await Authenticate(model.Email);
-
                     return RedirectToAction("Login", "Account");
                 }
                 else
@@ -113,9 +121,15 @@ namespace Task4_Authorisation.Controllers
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(id));
         }
 
+        private void SetIdToSession(string email)
+        {
+            HttpContext.Session.SetInt32("userId", usersRepository.AllUsers.First(u => u.email == email).id);
+        }
+
         public async Task<IActionResult> Logout()
         {
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            HttpContext.Session.Clear();
             return RedirectToAction("Login", "Account");
         }
     }

@@ -12,5 +12,7 @@ namespace Task4_Authorisation.Data.Interfaces
 
         public Task AddUser(User user);
         public Task DeleteUsers(User[] users);
+        public Task ChangeStatus(User[] users, bool newStatus);
+        public Task UpdateLastLogin(string email);
     }
 }

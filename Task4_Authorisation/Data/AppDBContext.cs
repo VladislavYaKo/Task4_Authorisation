@@ -12,7 +12,7 @@ namespace Task4_Authorisation.Data
         public DbSet<User> users { get; set; }
         public AppDBContext(DbContextOptions<AppDBContext> options) : base(options)
         {
-
+            Database.EnsureCreated();
         }
     }
 }

@@ -5,12 +5,17 @@
 <h2>Список пользователей</h2>
 
 <form asp-controller="Users" asp-action="ProcessList">
-    <input type="submit" value="Delete" name="actionBtn" />
-    <input type="submit" value="Block" name="actionBtn" />
-    <input type="submit" value="Unblock" name="actionBtn" />
+    <button value="Block" name="actionBtn">Block</button>
+    <button value="Unblock" name="actionBtn">
+        <img src="~/icons/Unlock.svg" width="16" height="16" alt="Unblock" />
+    </button>
+    <button value="Delete" name="actionBtn">
+        <img src="~/icons/Delete.svg" width="16" height="16" alt="Delete" />
+    </button>
     <table class="table">
         <tr>
             <td><input type="checkbox" id="changeAll" onclick="changeAllClick()" name="changeAll" /></td>
+            <td>Id</td>
             <td>Имя</td>
             <td>E-mail</td>
             <td>Дата регистрации</td>
@@ -22,6 +27,7 @@
             {
                 <tr>
                     <td><input type="checkbox" name="choosenUser" value="@u.id" class="userCheckBox" /></td>
+                    <td>@u.id</td>
                     <td>@u.name</td>
                     <td>@u.email</td>
                     <td>@u.registrationDate</td>
@@ -41,8 +47,7 @@
 </form>
 <a asp-controller="Account" asp-action="Logout">Выход</a>
 
-<script>
-    
+<script>    
     function changeAllClick(e) {
         var checkboxes = document.getElementsByClassName('userCheckBox');
         var changeAllBox = document.getElementById('changeAll');

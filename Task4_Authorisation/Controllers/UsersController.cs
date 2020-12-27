@@ -11,16 +11,19 @@ using System.Threading.Tasks;
 using Task4_Authorisation.Data.Interfaces;
 using Task4_Authorisation.Data.Models;
 using Task4_Authorisation.ViewModels;
+using Task4_Authorisation.Data.Services;
 
 namespace Task4_Authorisation.Controllers
 {
     public class UsersController : Controller
     {
         private readonly IUsers usersRepository;
+        private readonly TrackStatusesChangeService trackService;
 
-        public UsersController(IUsers iUsers)
+        public UsersController(IUsers iUsers, TrackStatusesChangeService trackService)
         {
             usersRepository = iUsers;
+            this.trackService = trackService;
         }
 
         [Authorize]
@@ -37,30 +40,30 @@ namespace Task4_Authorisation.Controllers
             {
                 Task result = (Task)this.GetType()
                     .GetMethod(actionBtn + "Users", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                    .Invoke(this, new object[] { affectedUsers});
+                    .Invoke(this, new object[] { affectedUsers });
                 await result;
             }
-            catch(Exception e)
-            {
-                string debug = e.Message;
-            }
-            
+            catch
+            { }            
             return RedirectToAction("UsersList");
         }
-
+        [Authorize]
         private async Task DeleteUsers(User[] affectedUsers)
         {
             await usersRepository.DeleteUsers(affectedUsers);
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            trackService.Unlogine(affectedUsers.Select(u => u.id).ToArray());
         }
-
-        private void BlockUsers(User[] affectedUsers)
+        [Authorize]
+        private async Task BlockUsers(User[] affectedUsers)
         {
-
+            await usersRepository.ChangeStatus(affectedUsers, true);
+            trackService.Unlogine(affectedUsers.Select(u => u.id).ToArray());
         }
-        private void UnblockUsers(User[] affectedUsers)
+        [Authorize]
+        private async Task UnblockUsers(User[] affectedUsers)
         {
-
+            await usersRepository.ChangeStatus(affectedUsers, false);
+            trackService.ResetUnlogine(affectedUsers.Select(u => u.id).ToArray());
         }
     }
 }
